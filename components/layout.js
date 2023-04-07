@@ -5,6 +5,7 @@ import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
 
 const name = 'Accelerometer';
+const name2 = 'Acceleration Graphs';
 export const siteTitle = 'Accelerometer web app';
 
 export default function Layout({ children, home }) {
@@ -30,40 +31,56 @@ export default function Layout({ children, home }) {
           <>
             <Image
               priority
-              src="/images/novadash.jpeg"
+              src="/images/logo.png"
               className={utilStyles.borderCircle}
-              height={190}
-              width={2000}
+              height={100}
+              width={200}
               alt=""
+              
             />
+            <br></br>
             <h1 className={utilStyles.heading2Xl}>{name}</h1>
           </>
         ) : (
           <>
-            <Link href="/">
-              <Image
-                priority
-                src="/images/profile.jpg"
-                className={utilStyles.borderCircle}
-                height={108}
-                width={108}
-                alt=""
-              />
-            </Link>
-            <h2 className={utilStyles.headingLg}>
-              <Link href="/" className={utilStyles.colorInherit}>
-                {name}
+            <section style={{ display: "flex", justifyContent: "center" }}>
+              <Link href={"/"}>
+                <Image
+                  priority
+                  src="/images/logo.png"
+                  className={utilStyles.borderCircle3}
+                  height={100}
+                  width={200}
+                  alt=""
+                
+                />
               </Link>
-            </h2>
+            </section>
+            <br></br>
+            <section style={{ display: "flex", justifyContent: "center" }}>
+              <Link href="/">
+                <Image
+                  priority
+                  src="/images/robot3.png"
+                  className={utilStyles.borderCircle4}
+                  height={108}
+                  width={108}
+                  alt=""
+                />
+              </Link>
+            </section>
+            <section style={{ display: "flex", justifyContent: "center" }}>
+              <h2 className={utilStyles.headingLg}>
+                <Link href="/" className={utilStyles.colorInherit}>
+                  {name2}
+                </Link>
+              </h2>
+            </section>
+            
           </>
         )}
       </header>
       <main>{children}</main>
-      {!home && (
-        <div className={styles.backToHome}>
-          <Link href="/">← Back to home</Link>
-        </div>
-      )}
     </div>
   );
 }

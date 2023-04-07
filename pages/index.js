@@ -12,47 +12,48 @@ export default function Home() {
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-          <section style={{display:"flex",justifyContent:"center"}}>
-            Press on the "Charts" button to view the chart created for the accelerometer, otherwise press the "Warnings" buttons to see all available
-      </section>
+        <section style={{ display: "flex", justifyContent: "center" }}>
+          <p> 
+            ISCF Labwork 1
+          </p>
+        </section>
 
-      <section style={{display:"flex",justifyContent:"center"}}>
+        <br></br><br></br>
+
+        <section style={{ display: "flex", justifyContent: "center" }}>
           <Image
             priority
-            src="/images/coppelia.png"
-            className={utilStyles.borderCircle2}
+            src="/images/robot3.png"
+            className={utilStyles.borderCircle1}
             height={200}
             width={200}
-            alt=""/>
+            alt="" />
+        </section>
+        <br></br><br></br>
+
+
+        <section style={{ display: "flex", justifyContent: "center" }}>
+
+          <Link href="/login">
+            <button className={buttonStyles.buttonbox}> Login </button>
+          </Link>
+
+
+        </section>
       </section>
 
-        
-        <section style={{display:"flex",justifyContent:"center"}}>
-
-        <Link href="/posts/first-post">
-          <button className={buttonStyles.buttonbox}> Charts</button>
-        </Link>
-
-        <Link href="/login">
-          <button className={buttonStyles.buttonbox}> Login </button>
-        </Link>
-      </section> 
-      
-      
-
-
-      
-      </section>
       <div className="footer">
-        <p>António Malato 55243 e Tomás Vasques 55950</p>
+        <p> Project developed by : António Malato 55243 & Tomás Vasques 55950</p>
       </div>
       <style jsx>{`
         .footer {
           position: absolute;
+          text-decoration: overline;
           bottom: 0;
-          width: 98%;
+          width: 100%;
           height: 30px;
-          background-color: darkgrey;
+          color: wheat;
+          background-color: rgb(32, 32, 32);
           display: flex;
           justify-content: center;
           align-items: center;

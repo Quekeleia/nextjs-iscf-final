@@ -2,11 +2,16 @@ import Link from 'next/link';
 import Head from 'next/head';
 import LineChart from '/components/LineChart'
 import buttonStyles from '/styles/button.module.css';
-import {useSession, signOut} from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, get, onValue} from "firebase/database";
+import { getDatabase, ref, get, onValue } from "firebase/database";
+import utilStyles from '/styles/utils.module.css';
+import Layout, { siteTitle } from '/components/layout';
+import { Colors } from 'chart.js';
+
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,7 +33,7 @@ const firebaseConfig = {
 
 export default function FirstPost(){
 
-    const{  data: session, status } = useSession({required:true})
+    const{  data: status } = useSession({required:true})
 
     const [dataFromDatabase, setDataX] = useState({ //Inicializar em vazio a estrutura 
         labels: [] ,
@@ -66,7 +71,6 @@ export default function FirstPost(){
       second: '2-digit'
     };
 
-    const [intervalId,setIntervalId] = useState(null);
     const [num_Refresh,setRefreshnum] = useState(0);
     const [finalNumRefr,setRefreshnumFin] = useState(0);
 
@@ -79,21 +83,14 @@ export default function FirstPost(){
       setRefreshnumFin(num_Refresh); // Guarda o valor final na variavel para utilizar, e usa ao dar handle submit
     };
 
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
 
-    useEffect(() => { // Hook permite correr as cenas em paralelo com a frontend, ou seja atualizar os dados na backend e enviar para a front
-     
-      
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const database = getDatabase(app);
-
-      const refAccel = ref(database, 'Accel');
-
-      function refresh_rate(){ //Lê e atualiza o gráfico uma vez
+    function get_data(database){ //Lê e atualiza o gráfico uma vez
         
-           
-        
-          
+
+          const refAccel = ref(database, 'Accel');
+
           get(refAccel).then( (snapshot) => { // Faço get para ir so buscar uma vez, e dou setTimeout no final para ele realizar esta funcionalidade de x em x tempo
 
             const data_FB = snapshot.val();
@@ -134,80 +131,98 @@ export default function FirstPost(){
                 
               });
             }
-            
-            
-            const id = setInterval(refresh_rate,finalNumRefr); //Quando usamos a função guardamos o id para depois dar clear (previne memory leaks)
-            setIntervalId(id);
-              return () =>  {
-                clearInterval(intervalId); // cada vez que ele corre este on effect ele analisa o ultimo falor de num_Refresh por isso podemos limpar
-                };
-        
-    }, []); 
+    
 
+    useEffect(() => { // Hook permite correr as cenas em paralelo com a frontend, ou seja atualizar os dados na backend e enviar para a front
+     
+      
+     
+      const id = setInterval(() => 
+      {
 
+        get_data(database);
+      
+      } , finalNumRefr); //Quando usamos a função guardamos o id para depois dar clear (previne memory leaks)
 
-if(status === "authenticated"){
-return (
-    <>
-        <Head> 
-            
-            <title>Accelaration Graphs</title>
+      
+
+      return () =>  clearInterval(id); // cada vez que ele corre este on effect ele analisa o ultimo falor de num_Refresh por isso podemos limpar
 
         
-        </Head>
+    }, [finalNumRefr]); //Para limpar a variável quando voltar a correr
 
-        
-        <section style={{display:"flex",justifyContent:"center"}}>
-          <h1>Accelaration Graphs</h1>
-        </section>
+      
 
-        <section style={{display:"flex",justifyContent:"center"}}>
-        
-          <form onSubmit={handleSubmit}>
+
+  return (
+    <Layout>
+      <Head>
+        <title>Acceleration Graphs</title>
+      </Head>
+
+      <section style={{ display: "flex", justifyContent: "center" }}>
+
+        <form onSubmit={handleSubmit}>
+          <section className={utilStyles.headingMd}>
             <label> Enter the Refresh Rate in miliseconds: </label>
-            <input type="number" id="R_Freq" 
-           name="R_freq" min="0" max="10000" value={num_Refresh} onChange={handleChange} />
-            <button className={buttonStyles.buttonbox2}  >Submit</button>   
+            <input type="number" id="R_Freq"
+              name="R_freq" min="0" max="10000" value={num_Refresh} onChange={handleChange} />
+            <button className={buttonStyles.buttonbox2}  >Submit</button>
+          </section>
           </form>
 
-        </section>
-        
-        <section style={{display:"flex",justifyContent:"center"}}>
-        <div style ={{width: 900 }}>
-        <LineChart chartData = {dataFromDatabase}/>
+      </section>
+
+      <section style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ width: 900 }}>
+          <LineChart chartData={dataFromDatabase}/>
         </div>
-        </section>
+      </section>
 
-        <section style={{display:"flex",justifyContent:"center"}}>
-        <div style ={{width: 900 }}>
-        <LineChart chartData = {dataFromDatabaseY}/>
+      <section style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ width: 900 }}>
+          <LineChart chartData={dataFromDatabaseY} />
         </div>
-        </section>
+      </section>
 
-        <section style={{display:"flex",justifyContent:"center"}}>
-        <div style ={{width: 900 }}>
-        <LineChart chartData = {dataFromDatabaseZ}/>
+      <section style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ width: 900 }}>
+          <LineChart chartData={dataFromDatabaseZ} />
         </div>
-        </section>
-        
-        
+      </section>
 
-        <section style={{display:"flex",justifyContent:"center"}}>
-            <Link href="/">
-                <button className={buttonStyles.buttonbox}> Back to main page </button>
-            </Link>
-        </section>
 
-        <div className="footer">
-        <p>António Malato 55243 e Tomás Vasques 55950</p>
+
+      <section style={{ display: "flex", justifyContent: "center" }}>
+
+
+        <Link href="/login">
+          <button className={buttonStyles.buttonbox}> Back to Welcome page </button>
+        </Link>
+
+
+
+        <Link href="/">
+          <button className={buttonStyles.buttonbox}> Back to Home </button>
+        </Link>
+
+
+
+
+      </section>
+
+      <div className="footer">
+        <p>Project developed by : António Malato 55243 & Tomás Vasques 55950</p>
       </div>
       <style jsx>{`
         .footer {
           position: relative;
-          bottom: 0;
+          bottom: -110px;
+          text-decoration: overline;
           width: 100%;
           height: 30px;
-          background-color: darkgrey;
+          background-color: rgb(32, 32, 32);
+          color: wheat;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -216,21 +231,6 @@ return (
           margin: 0;
         }
       `}</style>
-    </>
-);
-} else {
-
-  return(
-
-    <div>
-       <p>You are not signed in</p> 
-    </div>
-
-)
-
+    </Layout>
+  );
 }
-
-
-}
-
-
